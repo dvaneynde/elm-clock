@@ -120,7 +120,7 @@ view model =
         ]
         ])
    ]
-   --, Html.text ("Current time = " ++ (toString (((floor (Time.inHours model))+2) % 12)))
    , Html.text (Date.Format.format "%A, %B %d, %Y - %I:%M:%S" (Date.fromTime model))
+   , Html.text ( "TEST: " ++ ((Time.inHours model)%12))
    ]
 
