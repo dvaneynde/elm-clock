@@ -1,10 +1,11 @@
-import Html exposing (Html)
+import Html exposing (Html, div, text)
 import Html.App as App
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import Time exposing (Time, second)
 
-
+import Date
+import Date.Format
 
 main =
   App.program
@@ -79,7 +80,7 @@ minutesHand model =
 hoursHand : Model -> Svg Msg
 hoursHand model =
   let
-    rotation =  (floor (Time.inHours model)) % 12 * 5
+    rotation =  (((floor (Time.inHours model))+2) % 12) * 30
     rotationString = "rotate(" ++ (toString rotation) ++ ")"
   in
     g [transform rotationString] [
@@ -106,7 +107,7 @@ major i =
 
 view : Model -> Html Msg
 view model =
-  svg [ viewBox "0 0 100 100", width "300px" ] [
+  div [] [svg [ viewBox "0 0 100 100", width "300px" ] [
     g [ transform "translate(50,50)" ]
       (List.concat [
         [ circle [ cx "0", cy "0", r "48", fill "white", stroke "#333" ] [] ]
@@ -118,5 +119,8 @@ view model =
           , secondsHand model
         ]
         ])
+   ]
+   --, Html.text ("Current time = " ++ (toString (((floor (Time.inHours model))+2) % 12)))
+   , Html.text (Date.Format.format "%A, %B %d, %Y - %I:%M:%S" (Date.fromTime model))
    ]
 
