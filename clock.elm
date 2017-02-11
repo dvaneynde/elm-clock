@@ -1,6 +1,7 @@
 module Main exposing (..)
 
 import Html exposing (Html, div, text, program)
+import Html.Attributes
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import Time exposing (Time, second)
@@ -79,11 +80,8 @@ minutesHand model =
     let
         rotation =
             (floor (Time.inMinutes model)) % 60 * 6
-
-        rotationString =
-            "rotate(" ++ (toString rotation) ++ ")"
     in
-        g [ transform rotationString ]
+        g [ transform ( "rotate(" ++ (toString rotation) ++ ")" ) ]
             [ line [ y1 "10", y2 "-38", stroke "#666" ] []
             ]
 
@@ -92,13 +90,10 @@ hoursHand : Model -> Svg Msg
 hoursHand model =
     let
         rotation =
-            (((floor (Time.inHours model)) + 2) % 12) * 30
-
-        rotationString =
-            "rotate(" ++ (toString rotation) ++ ")"
+            (((floor (Time.inHours model)) + 1) % 12) * 30
     in
-        g [ transform rotationString ]
-            [ line [ y1 "2", y2 "-20", stroke "#333" ] []
+        g [ transform ( "rotate(" ++ (toString rotation) ++ ")" ) ]
+            [ line [ y1 "5", y2 "-24", stroke "#333" ] []
             ]
 
 
@@ -128,19 +123,25 @@ major i =
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ svg [ viewBox "0 0 100 100", width "300px" ]
-            [ g [ transform "translate(50,50)" ]
-                (List.concat
-                    [ [ circle [ cx "0", cy "0", r "48", fill "white", stroke "#333" ] [] ]
-                    , List.map minor (List.range 0 59)
-                    , List.map major (List.range 0 11)
-                    , [ hoursHand model
-                      , minutesHand model
-                      , secondsHand model
-                      ]
-                    ]
-                )
-            ]
-        , Html.text (Date.Format.format "%A, %B %d, %Y - %I:%M:%S" (Date.fromTime model))
+    div [] [
+        div [Html.Attributes.style [("float","left")] ] [
+            svg [ viewBox "0 0 100 100", width "300px" ]
+                [ g [ transform "translate(50,50)" ]
+                    (List.concat
+                        [ [ circle [ cx "0", cy "0", r "48", fill "white", stroke "#333" ] [] ]
+                        , List.map minor (List.range 0 59)
+                        , List.map major (List.range 0 11)
+                        , [ hoursHand model
+                          , minutesHand model
+                          , secondsHand model
+                          ]
+                        ]
+                    )
+                ]
         ]
+        , div [Html.Attributes.style[("text-align","right"), ("width","600px"), ("padding-top","200px")]] [
+            Html.text (Date.Format.format "%A, %B %d, %Y" (Date.fromTime model))
+            , Html.br [] []
+            , Html.span[Html.Attributes.style[("font-size","3em")]] [Html.text (Date.Format.format "%I:%M:%S" (Date.fromTime model))]
+        ]
+    ]
